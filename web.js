@@ -5,8 +5,8 @@ app.use(express.logger());
 var fs = IMPORTS.require('fs');
 
 app.get('/', function(request, response) {
-  var contents = fs.readFileSync('index.html');
-  response.send(contents);
+  var buf_contents = fs.readFileSync('index.html');
+  response.send(buf_contents.toString());
 });
 
 var port = process.env.PORT || 5000;
