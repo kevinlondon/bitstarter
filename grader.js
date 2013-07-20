@@ -44,18 +44,15 @@ var assertUrlExists = function(url) {
             console.log("%s does not exist. Exiting.", url);
             process.exit(1);
         } else {
-            return result;
+            checkJson = runChecks(cheerio.load(result), program.checks);
+            var outJson = JSON.stringify(checkJson, null, 4);
+            console.log(outJson);
         }
     });
     return url;
 };
 
 var cheerioHtmlFile = function(htmlfile) {
-    if(URL_DEFAULT != "penguins") {
-        console.log("URL: " + URL_DEFAULT);
-    } else {
-        console.log("Bummer.")
-    }
     return cheerio.load(fs.readFileSync(htmlfile));
 };
 
@@ -93,18 +90,11 @@ if(require.main == module) {
         .option('-u, --url <link>', 'Path to investigatable url.', assertUrlExists)
         .parse(process.argv);
 
-    var checkJson = "";
-    if(program.url){
-        rest.get(program.url).on('complete', function(data) {
-            $ = cheerio.load(data);
-            checkJson = runChecks($, program.checks);
-            console.log(checkJson);
-        });
-    } else {
+    if(!program.url){
         var checkJson = checkHtmlFile(program.file, program.checks);
+        var outJson = JSON.stringify(checkJson, null, 4);
+        console.log(outJson);
     }
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
